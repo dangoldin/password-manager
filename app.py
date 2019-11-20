@@ -20,8 +20,13 @@ def index():
 @app.route('/sms', methods=['POST'])
 def sms():
     body = request.values.get('Body', None)
+    from_ = request.values.get('From', None)
 
     response = MessagingResponse()
+    if from_ != os.environ.get('MY_PHONE'):
+        response.message('Unauthorized')
+        return str(response)
+
     try:
         with open(os.environ.get('PASS_PATH'), 'rb') as f:
             r = f.read()
